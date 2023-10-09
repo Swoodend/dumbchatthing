@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Home from './Home';
+import Home from './Home/Home';
 import { socket } from '../socket';
 
 const App = () => {
