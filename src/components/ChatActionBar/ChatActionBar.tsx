@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles.css';
 import { socket } from '../../socket';
-import { socketEvents } from '../../backend/socket_server/events';
+import { actions } from '../../actions/actions';
 
 const ChatActionBar = () => {
   const [text, setText] = React.useState('');
@@ -9,7 +9,12 @@ const ChatActionBar = () => {
   const onSendMessage = (message: string) => {
     if (!message) return;
 
-    socket.emit(socketEvents.CHAT_MESSAGE, message);
+    actions.SEND_SERVER_MESSAGE(socket, {
+      message,
+      destinationClientId: 'floop',
+      sender: 'currentUser',
+    });
+
     setText('');
   };
 

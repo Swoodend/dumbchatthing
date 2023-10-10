@@ -7,16 +7,40 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
+type SocketID = string;
+
+type ClientRepo = {
+  [clientId: string]: SocketID;
+};
+
+export type ServerMessagePayload = {
+  message: string;
+  destinationClientId: string;
+  sender: string;
+};
+
+const clientRepo: ClientRepo = {};
+
 // when the app opens, a user should connect to the socket server
 io.on(socketEvents.CONNECTION, (socket) => {
-  console.log('a user connected');
+  // after the client app spins up, lets add the client to our map
+  socket.on(socketEvents.CHAT_INIT, (clientId: string) => {
+    clientRepo[clientId] = socket.id;
+  });
 
-  // when the user opens a chat, we shoud connect the two clients
-  socket.on('chat_init', () => {});
+  // when a client sends a message to the server
+  socket.on(socketEvents.SERVER_MESSAGE, (payload: ServerMessagePayload) => {
+    console.log('PAYLOAD:', payload);
+    const destinationSocket = clientRepo[payload.destinationClientId];
 
-  // when a user sends  a message
-  socket.on(socketEvents.CHAT_MESSAGE, (message: string) => {
-    console.log('MESSAGE:', message);
+    if (!destinationSocket) {
+      console.log('you fucked up');
+      return;
+    }
+
+    socket
+      .to(destinationSocket)
+      .emit(socketEvents.CLIENT_MESSAGE, payload.message);
   });
 
   // when a user closes a chat, or closes the electron app entirely
