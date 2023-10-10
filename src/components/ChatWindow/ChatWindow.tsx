@@ -1,19 +1,12 @@
 import './styles.css';
+import ChatActionBar from '../ChatActionBar/ChatActionBar';
+import ChatReadout from '../ChatReadout/ChatReadout';
 
 const ChatWindow = () => {
   return (
     <div className="chat-window">
-      <div className="chat-readout-container">
-        <div className="chat-readout"></div>
-      </div>
-      <div className="chat-action-row">
-        <textarea className="block chat-input" />
-        <div className="chat-send-button-container">
-          <button className="chat-send-button" value="Send">
-            Send
-          </button>
-        </div>
-      </div>
+      <ChatReadout />
+      <ChatActionBar />
     </div>
   );
 };

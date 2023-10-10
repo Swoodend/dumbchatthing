@@ -1,0 +1,37 @@
+.chat-action-row {
+  grid-row: 8/-1;
+  display: flex;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.block {
+  display: block;
+}
+
+.chat-input {
+  height: 100%;
+  flex: 1;
+  border: 0;
+  padding: 0;
+  outline: 1px solid black;
+  resize: none;
+  padding-top: 4px;
+  padding-left: 4px;
+}
+
+.chat-send-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  min-width: 100px;
+}
+
+.chat-send-button {
+  height: 100%;
+  width: 100%;
+  border: 0;
+  outline: 1px solid black;
+  margin-left: 8px;
+}

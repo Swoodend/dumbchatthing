@@ -1,0 +1,9 @@
+.chat-readout-container {
+  grid-row: 1/8;
+}
+
+.chat-readout {
+  height: 100%;
+  background: white;
+  outline: 1px solid black;
+}
