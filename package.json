@@ -48,6 +48,9 @@
     "electron-squirrel-startup": "^1.0.0",
     "express": "4",
     "jsonwebtoken": "^9.0.2",
-    "socketio": "^1.0.0"
+    "react-router": "^6.16.0",
+    "react-router-dom": "^6.16.0",
+    "socketio": "^1.0.0",
+    "uuid": "^9.0.1"
   }
 }

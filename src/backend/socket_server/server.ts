@@ -51,8 +51,14 @@ io.on(socketEvents.CONNECTION, (socket) => {
 });
 
 app.use(bodyParser.json());
+
 app.post('/login', (req, res) => {
   console.log('POSTED TO /login, GOT BODY', req.body);
+  res.sendStatus(200);
+});
+
+app.post('/register', (req, res) => {
+  console.log('POSTED TO /register, GOT BODY', req.body);
   res.sendStatus(200);
 });
 

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-const Login = () => {
+const Register = () => {
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const email = (event.currentTarget.elements[0] as HTMLInputElement).value;
@@ -9,7 +9,7 @@ const Login = () => {
 
     if (!email || !password) return;
 
-    fetch('http://localhost:3001/login', {
+    fetch('http://localhost:3001/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ const Login = () => {
 
   return (
     <div>
-      <h1>Login</h1>
+      <h1>Register</h1>
       <form onSubmit={onSubmit}>
         <label>Email</label>
         <input type="text" name="email" />
@@ -30,10 +30,10 @@ const Login = () => {
         <button type="submit" value="submit" hidden />
       </form>
       <p>
-        New user? <Link to="/register">Register</Link> instead
+        Already signed up? <Link to="/login">login</Link> instead
       </p>
     </div>
   );
 };
 
-export default Login;
+export default Register;
