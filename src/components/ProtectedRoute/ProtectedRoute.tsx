@@ -8,9 +8,11 @@ type Props = {
 };
 
 const ProtectedRoute = ({ children, redirectTo = '/login' }: Props) => {
-  const { userId } = useAuth();
+  const { isLoggedIn } = useAuth();
 
-  if (!userId) {
+  console.log('PROTECTED ROUTE RAN. IS LOGGED IN?:', isLoggedIn);
+
+  if (!isLoggedIn) {
     // user is not authenticated
     return <Navigate to={redirectTo} />;
   }

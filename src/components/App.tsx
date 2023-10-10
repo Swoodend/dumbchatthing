@@ -4,20 +4,9 @@ import Register from './Register/Register';
 import ProtectedRoute from './ProtectedRoute/ProtectedRoute';
 
 import { HashRouter, Route, Routes } from 'react-router-dom';
-import { AuthProvider } from '../hooks/useAuth';
-
-const checkIsLoggedIn = (): boolean => {
-  return document.cookie.indexOf('beeb_chat_jwt') !== -1;
-};
+import { AuthProvider, useAuth } from '../hooks/useAuth';
 
 const App = () => {
-  /* useEffect(() => { */
-  /*   socket.emit(socketEvents.CHAT_INIT, 'alice'); */
-  /* }, []); */
-
-  /* const isLoggedIn = checkIsLoggedIn(); */
-
-  /* return isLoggedIn ? <Home /> : <Login />; */
   return (
     <HashRouter>
       <AuthProvider>

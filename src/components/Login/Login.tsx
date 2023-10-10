@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 const Login = () => {
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const { login } = useAuth();
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const email = (event.currentTarget.elements[0] as HTMLInputElement).value;
     const password = (event.currentTarget.elements[1] as HTMLInputElement)
@@ -9,13 +11,17 @@ const Login = () => {
 
     if (!email || !password) return;
 
-    fetch('http://localhost:3001/login', {
+    const response = await fetch('http://localhost:3001/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email, password }),
     });
+
+    if (response.ok) {
+      login();
+    }
   };
 
   return (

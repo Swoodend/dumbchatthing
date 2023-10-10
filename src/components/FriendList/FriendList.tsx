@@ -19,7 +19,11 @@ const FriendList = ({ friends }: Props) => {
     <div>
       <ul>
         {friends.map((friend) => (
-          <li className="friend-row" onClick={() => onClickFriend(friend.id)}>
+          <li
+            className="friend-row"
+            onClick={() => onClickFriend(friend.id)}
+            key={friend.id}
+          >
             {friend.displayName}
           </li>
         ))}

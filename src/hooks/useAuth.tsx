@@ -2,9 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 type Auth = {
-  email: string;
-  userId: string;
-  login: (auth: Auth) => void;
+  isLoggedIn: boolean;
+  login: () => void;
   logout: () => void;
 };
 
@@ -19,20 +18,19 @@ export const AuthProvider = ({ children }: Props) => {
   const navigate = useNavigate();
 
   // call this function when you want to authenticate the user
-  const login = async (data: Auth) => {
-    setAuth(data);
+  const login = React.useCallback(() => {
+    setAuth({ ...auth, isLoggedIn: true });
     navigate('/');
-  };
+  }, []);
 
   const logout = React.useCallback(() => {
-    setAuth(null);
+    setAuth({ ...auth, isLoggedIn: false });
     navigate('/login', { replace: true });
   }, []);
 
   const val = React.useMemo(
     () => ({
-      email: auth?.email,
-      userId: auth?.userId,
+      isLoggedIn: auth?.isLoggedIn ?? false,
       login,
       logout,
     }),

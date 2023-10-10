@@ -3,6 +3,12 @@ import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 import { socketEvents } from './events';
 import bodyParser from 'body-parser';
+import { db } from '../db/db';
+import { RunResult } from 'sqlite3';
+import jwt from 'jsonwebtoken';
+
+// TODO - move to env var
+const JWT_SECRET = '7bs8774v3vvHs72Gn984bs29GP';
 
 type SocketID = string;
 
@@ -58,7 +64,28 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  console.log('POSTED TO /register, GOT BODY', req.body);
+  const { email, password, username } = req.body;
+  // TODO -  salt/hash the password
+  // create user and save to db
+  const user = 'INSERT INTO users (username, email, password) VALUES (?,?,?)';
+
+  db.run(
+    user,
+    [username, email, password],
+    (_result: RunResult, error: Error) => {
+      if (error) {
+        console.error('REGISTRATION ERROR', error);
+        // check it is a duplicate error
+        res.sendStatus(400);
+        return;
+      }
+
+      console.log('ADDED TO DB');
+    }
+  );
+
+  const token = jwt.sign({ user: { email } }, JWT_SECRET);
+  res.cookie('jwt', token, { httpOnly: true });
   res.sendStatus(200);
 });
 
