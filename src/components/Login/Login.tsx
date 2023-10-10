@@ -1,8 +1,10 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 const Login = () => {
+  const navigate = useNavigate();
   const { login } = useAuth();
+
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const email = (event.currentTarget.elements[0] as HTMLInputElement).value;
@@ -21,6 +23,7 @@ const Login = () => {
 
     if (response.ok) {
       login();
+      navigate('/');
     }
   };
 

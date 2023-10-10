@@ -1,27 +1,16 @@
 import sqlite3 from 'sqlite3';
+import { createUsers, createFriends } from './seed';
 
 console.log('initiating in memory sqlite3 database');
 
-export const db = new sqlite3.Database(':memory:', (err) => {
+export const db = new sqlite3.Database(':memory:', async (err) => {
   if (err) {
-    console.error('unable to connect to db', err);
-    return;
+    return console.error('unable to connect to db', err);
   }
-
-  db.run(
-    `CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL,
-    password TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP);`,
-
-    (err) => {
-      if (err) {
-        console.error('attempt to creat users table failed', err);
-        return;
-      }
-      console.log('users table created successfully');
-    }
-  );
+  try {
+    await createUsers(db);
+    await createFriends(db);
+  } catch (err) {
+    console.error('error when init db:', err);
+  }
 });
