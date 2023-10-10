@@ -2,10 +2,7 @@ import express from 'express';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 import { socketEvents } from './events';
-
-const app = express();
-const server = createServer(app);
-const io = new Server(server);
+import bodyParser from 'body-parser';
 
 type SocketID = string;
 
@@ -18,6 +15,10 @@ export type ServerMessagePayload = {
   destinationClientId: string;
   sender: string;
 };
+
+const app = express();
+const server = createServer(app);
+const io = new Server(server);
 
 const clientRepo: ClientRepo = {};
 
@@ -47,6 +48,12 @@ io.on(socketEvents.CONNECTION, (socket) => {
   socket.on(socketEvents.DISCONNECT, () => {
     console.log('a user disconnected');
   });
+});
+
+app.use(bodyParser.json());
+app.post('/login', (req, res) => {
+  console.log('POSTED TO /login, GOT BODY', req.body);
+  res.sendStatus(200);
 });
 
 server.listen(3001, () => {

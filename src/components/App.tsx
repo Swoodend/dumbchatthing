@@ -1,14 +1,18 @@
-import { useEffect } from 'react';
 import Home from './Home/Home';
-import { socket } from '../socket';
-import { socketEvents } from '../backend/socket_server/events';
+import Login from './Login/Login';
+
+const checkIsLoggedIn = (): boolean => {
+  return document.cookie.indexOf('beeb_chat_jwt') !== -1;
+};
 
 const App = () => {
-  useEffect(() => {
-    socket.emit(socketEvents.CHAT_INIT, 'alice');
-  }, []);
+  /* useEffect(() => { */
+  /*   socket.emit(socketEvents.CHAT_INIT, 'alice'); */
+  /* }, []); */
 
-  return <Home />;
+  const isLoggedIn = checkIsLoggedIn();
+
+  return isLoggedIn ? <Home /> : <Login />;
 };
 
 export default App;
