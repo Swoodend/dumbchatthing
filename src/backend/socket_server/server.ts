@@ -59,8 +59,41 @@ io.on(socketEvents.CONNECTION, (socket) => {
 app.use(bodyParser.json());
 
 app.post('/login', (req, res) => {
-  console.log('POSTED TO /login, GOT BODY', req.body);
-  res.sendStatus(200);
+  const { email, password } = req.body;
+  // TODO -  salt/hash the password
+
+  console.log('LOGIN ROUTE HIT', req.body);
+  // find user
+  const userQuery = 'SELECT * FROM users WHERE email=?';
+  db.get(
+    userQuery,
+    [email],
+    // TODO - where to type these responses?
+    (error, user: { id: number; password: string; username: string }) => {
+      console.log('EXECUTED A QUERY');
+      if (error) {
+        console.error('something went wrong', email);
+        res.sendStatus(500);
+        return;
+      }
+
+      //TODO - salt/hash this shit
+      if (user && user?.password === password) {
+        const responsePayload = {
+          userId: user.id,
+          email,
+          username: user.username,
+        };
+
+        const token = jwt.sign(responsePayload, JWT_SECRET);
+        res.cookie('jwt', token, { httpOnly: true });
+        res.status(200).json(responsePayload);
+      } else {
+        console.error('Incorrect login');
+        res.sendStatus(401);
+      }
+    }
+  );
 });
 
 app.post('/register', (req, res) => {
@@ -72,7 +105,7 @@ app.post('/register', (req, res) => {
   db.run(
     user,
     [username, email, password],
-    (_result: RunResult, error: Error) => {
+    function (_result: RunResult, error: Error) {
       if (error) {
         console.error('REGISTRATION ERROR', error);
         // check it is a duplicate error
@@ -80,13 +113,14 @@ app.post('/register', (req, res) => {
         return;
       }
 
+      const responsePayload = { userId: this.lastId, email, username };
+
+      const token = jwt.sign(responsePayload, JWT_SECRET);
+      res.cookie('jwt', token, { httpOnly: true });
+      res.status(200).json(responsePayload);
       console.log('ADDED TO DB');
     }
   );
-
-  const token = jwt.sign({ user: { email } }, JWT_SECRET);
-  res.cookie('jwt', token, { httpOnly: true });
-  res.sendStatus(200);
 });
 
 server.listen(3001, () => {

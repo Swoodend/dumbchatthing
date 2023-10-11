@@ -1,6 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
+type LoginResponsePayload = {
+  email: string;
+  userId: number;
+  username: string;
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -11,18 +17,28 @@ const Login = () => {
     const password = (event.currentTarget.elements[1] as HTMLInputElement)
       .value;
 
-    if (!email || !password) return;
+    const loginUser = async (): Promise<LoginResponsePayload | void> => {
+      if (!email || !password) return;
 
-    const response = await fetch('http://localhost:3001/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+      const res = await fetch('http://localhost:3001/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (response.ok) {
-      login();
+      if (res.ok) {
+        return await res.json();
+      } else {
+        throw new Error('Unable to register user!');
+      }
+    };
+
+    const responsePayload = await loginUser();
+
+    if (responsePayload) {
+      login(responsePayload.userId, responsePayload.username);
       navigate('/');
     }
   };
