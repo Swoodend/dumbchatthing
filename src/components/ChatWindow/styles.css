@@ -1,7 +1,17 @@
 .chat-window {
   display: grid;
+  position: relative;
   grid-template-rows: repeat(8, 100px);
   grid-gap: 0;
   background: #ebf7ff;
   padding: 24px;
+}
+
+.close-button {
+  position: absolute;
+  top: 0;
+  right: 5px;
+  color: red;
+  cursor: pointer;
+  font-size: 24px;
 }

@@ -6,39 +6,45 @@ import bodyParser from 'body-parser';
 import { db } from '../db/db';
 import { RunResult } from 'sqlite3';
 import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+import { Friend } from '../../components/FriendList/FriendList';
 
 // TODO - move to env var
 const JWT_SECRET = '7bs8774v3vvHs72Gn984bs29GP';
 
-type SocketID = string;
-
-type ClientRepo = {
-  [clientId: string]: SocketID;
+type jwtToken = {
+  username: string;
+  email: string;
+  id: number;
 };
 
 export type ServerMessagePayload = {
   message: string;
-  destinationClientId: string;
-  sender: string;
+  destinationClientId: number;
 };
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-const clientRepo: ClientRepo = {};
+const userIdToSocketMap = new Map<number, WebSocket>();
+const socketIdToUserIdMap = new Map<string, number>();
 
+// TODO - pull socket logic out to it's own module
 // when the app opens, a user should connect to the socket server
 io.on(socketEvents.CONNECTION, (socket) => {
-  // after the client app spins up, lets add the client to our map
-  socket.on(socketEvents.CHAT_INIT, (clientId: string) => {
-    clientRepo[clientId] = socket.id;
+  // TODO - after login, lets add the client to our map
+  socket.on(socketEvents.CHAT_INIT, (userId: number) => {
+    userIdToSocketMap.set(userId, socket);
+    socketIdToUserIdMap.set(socket.id, userId);
   });
 
   // when a client sends a message to the server
   socket.on(socketEvents.SERVER_MESSAGE, (payload: ServerMessagePayload) => {
     console.log('PAYLOAD:', payload);
-    const destinationSocket = clientRepo[payload.destinationClientId];
+    const destinationSocket = userIdToSocketMap.get(
+      payload.destinationClientId
+    );
 
     if (!destinationSocket) {
       console.log('you fucked up');
@@ -52,11 +58,17 @@ io.on(socketEvents.CONNECTION, (socket) => {
 
   // when a user closes a chat, or closes the electron app entirely
   socket.on(socketEvents.DISCONNECT, () => {
+    const userId = socketIdToUserIdMap.get(socket.id);
+    if (userId) {
+      userIdToSocketMap.delete(userId);
+    }
+    socketIdToUserIdMap.delete(socket.id);
     console.log('a user disconnected');
   });
 });
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
@@ -80,7 +92,7 @@ app.post('/login', (req, res) => {
       //TODO - salt/hash this shit
       if (user && user?.password === password) {
         const responsePayload = {
-          userId: user.id,
+          id: user.id,
           email,
           username: user.username,
         };
@@ -96,10 +108,12 @@ app.post('/login', (req, res) => {
   );
 });
 
+// TODO - pull REST stuff out to it's own module
 app.post('/register', (req, res) => {
   const { email, password, username } = req.body;
   // TODO -  salt/hash the password
   // create user and save to db
+  // TODO - all these queries can get pulled out somewhere so they aren't  redefined over and over for each request
   const user = 'INSERT INTO users (username, email, password) VALUES (?,?,?)';
 
   db.run(
@@ -113,7 +127,11 @@ app.post('/register', (req, res) => {
         return;
       }
 
-      const responsePayload = { userId: this.lastId, email, username };
+      const responsePayload: jwtToken = {
+        id: this.lastId,
+        email,
+        username,
+      };
 
       const token = jwt.sign(responsePayload, JWT_SECRET);
       res.cookie('jwt', token, { httpOnly: true });
@@ -121,6 +139,39 @@ app.post('/register', (req, res) => {
       console.log('ADDED TO DB');
     }
   );
+});
+
+app.get('/friends/:userId', (req, res) => {
+  const token = req.cookies.jwt;
+
+  if (!token) {
+    return res.sendStatus(400);
+  }
+
+  try {
+    const userData = jwt.verify(token, JWT_SECRET) as jwtToken;
+    const friendsQuery = `SELECT id, username, email FROM users INNER JOIN friends on users.id = friends.user_id WHERE friends.friend_id = ?`;
+
+    console.log('UD', userData);
+
+    db.all(friendsQuery, [userData.id], (err, friends: Friend[]) => {
+      if (err) {
+        console.error('friends query failed', err);
+        return res.sendStatus(500);
+      }
+
+      return res.status(200).json(
+        friends.map(({ id, username, email }) => ({
+          id,
+          username,
+          email,
+        }))
+      );
+    });
+  } catch (err) {
+    // catch the jwt.verify with an invalid secret
+    return res.sendStatus(401);
+  }
 });
 
 server.listen(3001, () => {

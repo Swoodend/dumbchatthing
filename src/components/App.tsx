@@ -4,7 +4,7 @@ import Register from './Register/Register';
 import ProtectedRoute from './ProtectedRoute/ProtectedRoute';
 
 import { HashRouter, Route, Routes } from 'react-router-dom';
-import { AuthProvider, useAuth } from '../hooks/useAuth';
+import { AuthProvider } from '../hooks/useAuth';
 
 const App = () => {
   return (

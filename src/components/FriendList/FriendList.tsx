@@ -3,16 +3,18 @@ import { socket } from '../../socket';
 import { socketEvents } from '../../backend/socket_server/events';
 
 export type Friend = {
-  id: string;
-  displayName: string;
+  id: number;
+  username: string;
   email: string;
 };
 type Props = {
   friends: Friend[];
+  updateActiveChats: (friendId: number) => void;
 };
-const FriendList = ({ friends }: Props) => {
-  const onClickFriend = (friendId: string) => {
+const FriendList = ({ friends, updateActiveChats }: Props) => {
+  const onClickFriend = (friendId: number) => {
     socket.emit(socketEvents.CREATE_ROOM, friendId);
+    updateActiveChats(friendId);
   };
 
   return (
@@ -20,11 +22,11 @@ const FriendList = ({ friends }: Props) => {
       <ul>
         {friends.map((friend) => (
           <li
+            key={friend.id}
             className="friend-row"
             onClick={() => onClickFriend(friend.id)}
-            key={friend.id}
           >
-            {friend.displayName}
+            {friend.username}
           </li>
         ))}
       </ul>
