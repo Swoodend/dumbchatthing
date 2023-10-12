@@ -2,8 +2,14 @@ import React from 'react';
 import './styles.css';
 import { socket } from '../../socket';
 import { actions } from '../../actions/actions';
+import { Friend } from '../FriendList/FriendList';
+import { useAuth } from '../../hooks/useAuth';
 
-const ChatActionBar = () => {
+type Props = {
+  friend: Friend;
+};
+
+const ChatActionBar = ({ friend }: Props) => {
   const [text, setText] = React.useState('');
 
   const onSendMessage = (message: string) => {
@@ -11,8 +17,7 @@ const ChatActionBar = () => {
 
     actions.SEND_SERVER_MESSAGE(socket, {
       message,
-      destinationClientId: 'floop',
-      sender: 'currentUser',
+      destinationClientId: friend.id,
     });
 
     setText('');

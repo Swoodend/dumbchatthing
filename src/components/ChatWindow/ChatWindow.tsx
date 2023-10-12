@@ -15,7 +15,7 @@ const ChatWindow = ({ friend, onClose }: Props) => {
         x
       </div>
       <ChatReadout />
-      <ChatActionBar />
+      <ChatActionBar friend={friend} />
     </div>
   );
 };
