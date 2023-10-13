@@ -7,6 +7,7 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from '../hooks/useAuth';
 import AddFriend from './AddFriend/AddFriend';
 import '@szhsin/react-menu/dist/core.css';
+import FriendRequests from '../pages/FriendRequests/FriendRequests';
 
 const App = () => {
   return (
@@ -26,6 +27,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <AddFriend />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/friend-requests"
+            element={
+              <ProtectedRoute>
+                <FriendRequests />
               </ProtectedRoute>
             }
           />

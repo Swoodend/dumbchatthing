@@ -27,7 +27,9 @@ const UserMenu = ({ friendRequests }: Props) => {
       <MenuItem disabled>Settings</MenuItem>
       <MenuItem>
         <div>
-          <Link to="/friend-requests">Friend Requests</Link>
+          <Link to="/friend-requests" state={{ friendRequests }}>
+            Friend Requests
+          </Link>
         </div>
       </MenuItem>
       <MenuItem>
