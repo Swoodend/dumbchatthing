@@ -5,4 +5,5 @@ export const socketEvents = {
   CREATE_ROOM: 'create_room',
   CHAT_INIT: 'chat_init',
   CLIENT_MESSAGE: 'client_message',
+  FRIEND_REQUEST: 'friend_request',
 };

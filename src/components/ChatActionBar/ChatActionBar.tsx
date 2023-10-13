@@ -3,7 +3,6 @@ import './styles.css';
 import { socket } from '../../socket';
 import { actions } from '../../actions/actions';
 import { Friend } from '../FriendList/FriendList';
-import { useAuth } from '../../hooks/useAuth';
 
 type Props = {
   friend: Friend;

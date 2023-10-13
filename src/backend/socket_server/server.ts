@@ -8,6 +8,8 @@ import { RunResult } from 'sqlite3';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import { Friend } from '../../components/FriendList/FriendList';
+import { lazy } from 'react';
+import { Socket } from 'socket.io-client';
 
 // TODO - move to env var
 const JWT_SECRET = '7bs8774v3vvHs72Gn984bs29GP';
@@ -27,7 +29,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-const userIdToSocketMap = new Map<number, WebSocket>();
+const userIdToSocketMap = new Map<number, Socket>();
 const socketIdToUserIdMap = new Map<string, number>();
 
 // TODO - pull socket logic out to it's own module
@@ -173,6 +175,43 @@ app.get('/friends/:userId', (req, res) => {
     return res.sendStatus(401);
   }
 });
+
+// this route creates a new friend request
+app.post('/add-friend', (req, res) => {
+  // send /post to server
+  const { friendEmail } = req.body;
+  const token = req.cookies.jwt;
+
+  try {
+    // server will validate JWT
+    const userData = jwt.verify(token, JWT_SECRET) as jwtToken;
+    const userQuery = `SELECT id, username, email FROM users WHERE email=?`;
+
+    db.get(userQuery, [friendEmail], (err: Error, friend: Friend) => {
+      if (err) {
+        console.error(err);
+        throw new Error('ERR FINDING FRIEND EMAIL!');
+      }
+
+      // server will validate friend exists
+      if (!friend) {
+        throw new Error('FRIEND NOT FOUND AT THAT EMAIL');
+      }
+
+      // server will emit new friend event to the user
+      const friendSocket = userIdToSocketMap.get(friend.id);
+      friendSocket.emit(socketEvents.FRIEND_REQUEST, {
+        from: { email: userData.email, username: userData.username },
+      });
+      return res.sendStatus(200);
+    });
+  } catch (err) {
+    console.error('JWT IS INVALID');
+  }
+});
+
+// TODO - create the friend relationship in SQL
+app.post('/accept-friend', () => {});
 
 server.listen(3001, () => {
   console.log('server running at http://localhost:3001');

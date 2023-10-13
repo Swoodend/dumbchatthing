@@ -1,0 +1,10 @@
+.profile-menu-option {
+  position: relative;
+}
+
+.alert-badge {
+  position: absolute;
+  color: red;
+  right: 0;
+  top: 0;
+}
