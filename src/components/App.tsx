@@ -23,6 +23,14 @@ const App = () => {
             }
           />
           <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/add-friend"
             element={
               <ProtectedRoute>
