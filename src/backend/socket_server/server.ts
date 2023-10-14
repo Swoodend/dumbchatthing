@@ -70,8 +70,8 @@ io.on(socketEvents.CONNECTION, (socket) => {
 
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
+app.use((_req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
 });
