@@ -1,4 +1,6 @@
 import express from 'express';
+import https from 'https';
+import fs from 'fs';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 import { socketEvents } from './events';
@@ -25,7 +27,13 @@ export type ServerMessagePayload = {
 };
 
 const app = express();
-const server = createServer(app);
+const server = https.createServer(
+  {
+    key: fs.readFileSync('./key.pem'),
+    cert: fs.readFileSync('./cert.pem'),
+  },
+  app
+);
 const io = new Server(server);
 
 const userIdToSocketMap = new Map<number, Socket>();

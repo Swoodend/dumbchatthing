@@ -90,3 +90,7 @@ typings/
 
 # Electron-Forge
 out/
+
+# Self signed certs
+cert.pem
+key.pem
