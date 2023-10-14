@@ -104,7 +104,7 @@ app.post('/login', (req, res) => {
         };
 
         const token = jwt.sign(responsePayload, JWT_SECRET);
-        res.cookie('jwt', token, { httpOnly: true });
+        res.cookie('jwt', token, { httpOnly: true, sameSite: 'none' });
         res.status(200).json(responsePayload);
       } else {
         console.error('Incorrect login');
@@ -140,7 +140,7 @@ app.post('/register', (req, res) => {
       };
 
       const token = jwt.sign(responsePayload, JWT_SECRET);
-      res.cookie('jwt', token, { httpOnly: true });
+      res.cookie('jwt', token, { httpOnly: true, sameSite: 'none' });
       res.status(200).json(responsePayload);
       console.log('ADDED TO DB');
     }
