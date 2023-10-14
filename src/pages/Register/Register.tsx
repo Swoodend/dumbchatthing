@@ -22,11 +22,12 @@ const Register = () => {
       async (): Promise<RegistrationResponsePayload | void> => {
         if (!email || !password || !username) return;
 
-        const res = await fetch('http://localhost:3001/register', {
+        const res = await fetch(process.env.API_URL + '/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({ email, password, username }),
         });
 

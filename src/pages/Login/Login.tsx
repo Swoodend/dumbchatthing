@@ -3,7 +3,7 @@ import { useAuth } from '../../hooks/useAuth';
 
 type LoginResponsePayload = {
   email: string;
-  userId: number;
+  id: number;
   username: string;
 };
 
@@ -20,11 +20,12 @@ const Login = () => {
     const loginUser = async (): Promise<LoginResponsePayload | void> => {
       if (!email || !password) return;
 
-      const res = await fetch('http://localhost:3001/login', {
+      const res = await fetch(process.env.API_URL + '/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
@@ -38,7 +39,7 @@ const Login = () => {
     const responsePayload = await loginUser();
 
     if (responsePayload) {
-      login(responsePayload.userId, responsePayload.username);
+      login(responsePayload.id, responsePayload.username);
       navigate('/');
     }
   };
@@ -46,6 +47,7 @@ const Login = () => {
   return (
     <div>
       <h1>Login</h1>
+      <h1>{process.env.API_URL}</h1>
       <form onSubmit={onSubmit}>
         <label>Email</label>
         <input type="text" name="email" />

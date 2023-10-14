@@ -1,6 +1,15 @@
 import type { Configuration } from 'webpack';
+import dotenv from 'dotenv';
+import webpack from 'webpack';
 
 import { rules } from './webpack.rules';
+
+const env = dotenv.config().parsed;
+
+const envKeys = Object.keys(env).reduce((prev: any, next: string) => {
+  prev[`process.env.${next}`] = JSON.stringify(env[next]);
+  return prev;
+}, {});
 
 export const mainConfig: Configuration = {
   /**
@@ -15,4 +24,5 @@ export const mainConfig: Configuration = {
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
   },
+  plugins: [new webpack.DefinePlugin(envKeys)],
 };

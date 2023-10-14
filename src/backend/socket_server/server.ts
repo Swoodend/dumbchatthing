@@ -8,7 +8,6 @@ import { RunResult } from 'sqlite3';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import { Friend } from '../../components/FriendList/FriendList';
-import { lazy } from 'react';
 import { Socket } from 'socket.io-client';
 
 // TODO - move to env var
@@ -71,6 +70,11 @@ io.on(socketEvents.CONNECTION, (socket) => {
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;

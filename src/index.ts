@@ -18,6 +18,10 @@ const createWindow = (): void => {
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       webSecurity: false,
+      // set to allow process.env to work in the browser in conjunction with dotenv, and webpack DefinePlugin
+      nodeIntegration: true,
+      // set to allow process.env to work in the browser in conjunction with dotenv, and webpack DefinePlugin
+      contextIsolation: false,
     },
   });
 

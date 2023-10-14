@@ -11,7 +11,7 @@ const AddFriend = () => {
     const email = target.email.value;
 
     // send /post to server
-    const res = await fetch('http://localhost:3001/add-friend', {
+    const res = await fetch(process.env.API_URL + '/add-friend', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -19,6 +19,7 @@ const AddFriend = () => {
       body: JSON.stringify({
         friendEmail: email,
       }),
+      credentials: 'include',
     });
 
     if (!res.ok) {

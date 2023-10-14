@@ -20,10 +20,9 @@ const Home = () => {
 
   React.useEffect(() => {
     const fetchFriends = async () => {
-      // fetch this endpoint, JWT must be passed which contains the userid
-      // start building this endpoint out
       const friendResponse = await fetch(
-        `http://localhost:3001/friends/${userId}`
+        `${process.env.API_URL}/friends/${userId}`,
+        { credentials: 'include' }
       );
 
       const friends = await friendResponse.json();
