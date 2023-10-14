@@ -107,7 +107,7 @@ app.post('/login', (req, res) => {
         res.cookie('jwt', token, {
           httpOnly: true,
           sameSite: 'none',
-          secure: false,
+          secure: true,
         });
         res.status(200).json(responsePayload);
       } else {
@@ -147,7 +147,7 @@ app.post('/register', (req, res) => {
       res.cookie('jwt', token, {
         httpOnly: true,
         sameSite: 'none',
-        secure: false,
+        secure: true,
       });
       res.status(200).json(responsePayload);
       console.log('ADDED TO DB');
