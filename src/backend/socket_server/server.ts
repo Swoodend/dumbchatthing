@@ -32,8 +32,10 @@ export type ServerMessagePayload = {
 const app = express();
 const server = https.createServer(
   {
-    key: fs.readFileSync(path.resolve(__dirname, '../../../server.key')),
-    cert: fs.readFileSync(path.resolve(__dirname, '../../../server.crt')),
+    key: fs.readFileSync(
+      path.resolve(__dirname, '../../../localhost+2-key.pem')
+    ),
+    cert: fs.readFileSync(path.resolve(__dirname, '../../../localhost+2.pem')),
   },
   app
 );
