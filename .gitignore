@@ -94,3 +94,5 @@ out/
 # Self signed certs
 cert.pem
 key.pem
+server.key
+server.crt
