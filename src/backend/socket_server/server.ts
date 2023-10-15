@@ -13,7 +13,7 @@ import { Friend } from '../../components/FriendList/FriendList';
 import { Socket } from 'socket.io-client';
 
 // TODO - move to env var
-const JWT_SECRET = '7bs8774v3vvHs72Gn984bs29GP';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 type jwtToken = {
   username: string;
@@ -31,6 +31,7 @@ const server = https.createServer(
   {
     key: fs.readFileSync(path.resolve(__dirname, '../../../key.pem')),
     cert: fs.readFileSync(path.resolve(__dirname, '../../../cert.pem')),
+    passphrase: process.env.SSL_PASSPHRASE,
   },
   app
 );
