@@ -11,6 +11,9 @@ import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import { Friend } from '../../components/FriendList/FriendList';
 import { Socket } from 'socket.io-client';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // TODO - move to env var
 const JWT_SECRET = process.env.JWT_SECRET;
