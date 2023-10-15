@@ -96,3 +96,4 @@ cert.pem
 key.pem
 server.key
 server.crt
+localhost+2*
