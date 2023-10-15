@@ -1,6 +1,7 @@
 import express from 'express';
 import https from 'https';
 import fs from 'fs';
+import path from 'path';
 import { Server } from 'socket.io';
 import { socketEvents } from './events';
 import bodyParser from 'body-parser';
@@ -28,8 +29,8 @@ export type ServerMessagePayload = {
 const app = express();
 const server = https.createServer(
   {
-    key: fs.readFileSync('../../../key.pem'),
-    cert: fs.readFileSync('../../../cert.pem'),
+    key: fs.readFileSync(path.resolve(__dirname, '../../../key.pem')),
+    cert: fs.readFileSync(path.resolve(__dirname, '../../../cert.pem')),
   },
   app
 );
