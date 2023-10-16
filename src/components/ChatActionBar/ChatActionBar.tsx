@@ -6,9 +6,10 @@ import { Friend } from '../FriendList/FriendList';
 
 type Props = {
   friend: Friend;
+  onSend: (message: string) => void;
 };
 
-const ChatActionBar = ({ friend }: Props) => {
+const ChatActionBar = ({ friend, onSend }: Props) => {
   const [text, setText] = React.useState('');
 
   const onSendMessage = (message: string) => {
@@ -20,6 +21,7 @@ const ChatActionBar = ({ friend }: Props) => {
     });
 
     setText('');
+    onSend(message);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
