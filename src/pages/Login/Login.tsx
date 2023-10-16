@@ -1,5 +1,7 @@
+import { socketEvents } from 'backend/socket_server/events';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { socket } from '../../socket';
 
 type LoginResponsePayload = {
   email: string;
@@ -39,7 +41,10 @@ const Login = () => {
     const responsePayload = await loginUser();
 
     if (responsePayload) {
+      // set logged in state in context so we know who the current user is throughout the app
       login(responsePayload.id, responsePayload.username);
+      // emit a CHAT_INIT event, this stores the socket/userId relationship in a map on the server
+      socket.emit(socketEvents.CHAT_INIT, responsePayload.id);
       navigate('/');
     }
   };
