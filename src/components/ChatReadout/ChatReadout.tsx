@@ -2,7 +2,12 @@ import { socketEvents } from '../../backend/socket_server/events';
 import React from 'react';
 import { socket } from '../../socket';
 import './styles.css';
-const ChatReadout = () => {
+
+type Props = {
+  messages: string[];
+};
+
+const ChatReadout = ({ messages }: Props) => {
   return (
     <div className="chat-readout-container">
       <div className="chat-readout">

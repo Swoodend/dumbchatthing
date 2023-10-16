@@ -29,7 +29,7 @@ const ChatWindow = ({ friend, onClose }: Props) => {
       <div onClick={() => onClose(friend.id)} className="close-button">
         x
       </div>
-      <ChatReadout />
+      <ChatReadout messages={messages} />
       <ChatActionBar friend={friend} />
     </div>
   );
