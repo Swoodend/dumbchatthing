@@ -68,9 +68,13 @@ io.on(socketEvents.CONNECTION, (socket) => {
       `SERVER_MESSAGE heard on the server. Sending CLIENT_MESSAGE event to userid: ${payload.destinationClientId}`
     );
 
-    socket
-      .to(destinationSocket)
-      .emit(socketEvents.CLIENT_MESSAGE, payload.message);
+    try {
+      socket
+        .to(destinationSocket.id)
+        .emit(socketEvents.CLIENT_MESSAGE, payload.message);
+    } catch (err) {
+      console.error('ERRROR WHEN SENDING SOCKET.CLIENT_MESSAGE', err);
+    }
   });
 
   // when a user closes a chat, or closes the electron app entirely
@@ -96,7 +100,6 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
   // TODO -  salt/hash the password
 
-  console.log('LOGIN ROUTE HIT', req.body);
   // find user
   const userQuery = 'SELECT * FROM users WHERE email=?';
   db.get(
@@ -104,9 +107,8 @@ app.post('/login', (req, res) => {
     [email],
     // TODO - where to type these responses?
     (error, user: { id: number; password: string; username: string }) => {
-      console.log('EXECUTED A QUERY');
       if (error) {
-        console.error('something went wrong', email);
+        console.error('something went wrong in /login', email);
         res.sendStatus(500);
         return;
       }
@@ -181,8 +183,6 @@ app.get('/friends/:userId', (req, res) => {
   try {
     const userData = jwt.verify(token, JWT_SECRET) as jwtToken;
     const friendsQuery = `SELECT id, username, email FROM users INNER JOIN friends on users.id = friends.user_id WHERE friends.friend_id = ?`;
-
-    console.log('UD', userData);
 
     db.all(friendsQuery, [userData.id], (err, friends: Friend[]) => {
       if (err) {
