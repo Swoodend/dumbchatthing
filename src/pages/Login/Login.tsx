@@ -1,4 +1,4 @@
-import { socketEvents } from 'backend/socket_server/events';
+import { socketEvents } from '../../backend/socket_server/events';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { socket } from '../../socket';
