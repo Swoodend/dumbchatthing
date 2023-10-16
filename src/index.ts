@@ -30,8 +30,21 @@ const createWindow = (): void => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
-};
 
+  mainWindow.webContents.session.setCertificateVerifyProc(
+    (request, callback) => {
+      const { hostname } = request;
+      console.log('I RAAAN', hostname);
+      callback(0);
+      /* if (hostname === 'localhost') { */
+      /*   //this is blind trust, however you should use the certificate, valdiatedcertifcate, verificationresult as your verification point to call callback */
+      /*   callback(0); //this means trust this domain */
+      /* } else { */
+      /*   callback(-3); //use chromium's verification result */
+      /* } */
+    }
+  );
+};
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.

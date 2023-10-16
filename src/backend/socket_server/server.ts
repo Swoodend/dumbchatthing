@@ -56,6 +56,8 @@ io.on(socketEvents.CONNECTION, (socket) => {
   // when a client sends a message to the server
   socket.on(socketEvents.SERVER_MESSAGE, (payload: ServerMessagePayload) => {
     console.log('PAYLOAD:', payload);
+
+    console.log('socketmap', userIdToSocketMap);
     const destinationSocket = userIdToSocketMap.get(
       payload.destinationClientId
     );
