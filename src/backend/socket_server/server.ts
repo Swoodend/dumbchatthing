@@ -55,9 +55,6 @@ io.on(socketEvents.CONNECTION, (socket) => {
 
   // when a client sends a message to the server
   socket.on(socketEvents.SERVER_MESSAGE, (payload: ServerMessagePayload) => {
-    console.log('PAYLOAD:', payload);
-
-    console.log('socketmap', userIdToSocketMap);
     const destinationSocket = userIdToSocketMap.get(
       payload.destinationClientId
     );
@@ -66,6 +63,10 @@ io.on(socketEvents.CONNECTION, (socket) => {
       console.log('you fucked up');
       return;
     }
+
+    console.log(
+      `SERVER_MESSAGE heard on the server. Sending CLIENT_MESSAGE event to userid: ${payload.destinationClientId}`
+    );
 
     socket
       .to(destinationSocket)

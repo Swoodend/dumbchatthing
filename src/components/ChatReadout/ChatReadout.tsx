@@ -3,15 +3,6 @@ import React from 'react';
 import { socket } from '../../socket';
 import './styles.css';
 const ChatReadout = () => {
-  const [messages, setMessages] = React.useState<string[]>([]);
-
-  React.useEffect(() => {
-    socket.on(socketEvents.CLIENT_MESSAGE, (message) => {
-      console.log('the socket ran and heard message:', message);
-      setMessages([...messages, message]);
-    });
-  }, []);
-
   return (
     <div className="chat-readout-container">
       <div className="chat-readout">
