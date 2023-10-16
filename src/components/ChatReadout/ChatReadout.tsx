@@ -7,6 +7,7 @@ const ChatReadout = () => {
 
   React.useEffect(() => {
     socket.on(socketEvents.CLIENT_MESSAGE, (message) => {
+      console.log('the socket ran and heard message:', message);
       setMessages([...messages, message]);
     });
   }, []);
@@ -15,7 +16,9 @@ const ChatReadout = () => {
     <div className="chat-readout-container">
       <div className="chat-readout">
         {messages.map((msg) => {
-          <p style={{ padding: '10px 0px' }}>{msg}</p>;
+          <p key={msg} style={{ padding: '10px 0px' }}>
+            {msg}
+          </p>;
         })}
       </div>
     </div>
