@@ -11,11 +11,16 @@ const ChatReadout = ({ messages }: Props) => {
   return (
     <div className="chat-readout-container">
       <div className="chat-readout">
-        {messages.map((msg) => {
-          <p key={msg} style={{ padding: '10px 0px' }}>
+        {messages.map((msg) => (
+          <p
+            key={msg}
+            style={{
+              padding: '10px 0px',
+            }}
+          >
             {msg}
-          </p>;
-        })}
+          </p>
+        ))}
       </div>
     </div>
   );
