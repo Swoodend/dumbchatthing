@@ -59,7 +59,20 @@ const Home = () => {
         }}
       />
       {activeChats.map((friendId: number) => (
-        <ChatWindow friend={friends.find((friend) => friend.id === friendId)} />
+        <WindowPortal
+          key={friendId}
+          friendId={friendId}
+          mainWindow={window}
+          onClose={(friendId: number) => {
+            setActiveChats(
+              activeChats.filter((activeChat) => activeChat !== friendId)
+            );
+          }}
+        >
+          <ChatWindow
+            friend={friends.find((friend) => friend.id === friendId)}
+          />
+        </WindowPortal>
       ))}
     </div>
   );

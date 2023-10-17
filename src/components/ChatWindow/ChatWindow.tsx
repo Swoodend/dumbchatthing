@@ -13,24 +13,21 @@ interface Props {
 
 const ChatWindow = ({ friend }: Props) => {
   const [messages, setMessages] = React.useState<string[]>([]);
+  const messagesRef = React.useRef<string[]>([]);
+
+  React.useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   React.useEffect(() => {
     socket.on(socketEvents.CLIENT_MESSAGE, (message) => {
-      console.log('SOCKET HEARD MESSAGE:', message, 'SETTING MESSAGES TO', [
-        ...messages,
-        message,
-      ]);
-      setMessages([...messages, message]);
+      setMessages([...messagesRef.current, message]);
     });
   }, []);
 
   const onSendMessage = (message: string) => {
     // when YOU send a message, we want to add the message you send to the chat readout
     // we don't ONLY want to add recieved messages from the socket to the readout
-    console.log('LOCAL HEARD MESSAGE:', message, 'SETTING MESSAGES TO', [
-      ...messages,
-      message,
-    ]);
     setMessages([...messages, message]);
   };
 
