@@ -15,12 +15,14 @@ const Login = () => {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const email = (event.currentTarget.elements[0] as HTMLInputElement).value;
-    const password = (event.currentTarget.elements[1] as HTMLInputElement)
-      .value;
+    let email = (event.currentTarget.elements[0] as HTMLInputElement).value;
+    let password = (event.currentTarget.elements[1] as HTMLInputElement).value;
 
     const loginUser = async (): Promise<LoginResponsePayload | void> => {
-      if (!email || !password) return;
+      if (!email || !password) {
+        email = 'alice@aol.com';
+        password = 'alice';
+      }
 
       const res = await fetch(process.env.API_URL + '/login', {
         method: 'POST',
@@ -55,10 +57,10 @@ const Login = () => {
       <h1>{process.env.API_URL}</h1>
       <form onSubmit={onSubmit}>
         <label>Email</label>
-        <input type="text" name="email" value="alice@aol.com" />
+        <input type="text" name="email" />
 
         <label>password</label>
-        <input type="password" name="password" value="alice" />
+        <input type="password" name="password" />
         <button type="submit" value="submit" hidden />
       </form>
       <p>
