@@ -9,11 +9,11 @@ import { Friend } from '../FriendList/FriendList';
 
 interface Props {
   friend: Friend;
-  onClose: (id: number) => void;
 }
 
-const ChatWindow = ({ friend, onClose }: Props) => {
+const ChatWindow = ({ friend }: Props) => {
   const [messages, setMessages] = React.useState<string[]>([]);
+
   React.useEffect(() => {
     socket.on(socketEvents.CLIENT_MESSAGE, (message) => {
       setMessages([...messages, message]);
@@ -28,9 +28,6 @@ const ChatWindow = ({ friend, onClose }: Props) => {
 
   return (
     <div className="chat-window">
-      <div onClick={() => onClose(friend.id)} className="close-button">
-        x
-      </div>
       <ChatReadout messages={messages} />
       <ChatActionBar friend={friend} onSend={onSendMessage} />
     </div>

@@ -55,10 +55,10 @@ const Login = () => {
       <h1>{process.env.API_URL}</h1>
       <form onSubmit={onSubmit}>
         <label>Email</label>
-        <input type="text" name="email" />
+        <input type="text" name="email" value="alice@aol.com" />
 
         <label>password</label>
-        <input type="password" name="password" />
+        <input type="password" name="password" value="alice" />
         <button type="submit" value="submit" hidden />
       </form>
       <p>

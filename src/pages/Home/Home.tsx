@@ -1,6 +1,7 @@
 import React from 'react';
 import FriendList, { Friend } from '../../components/FriendList/FriendList';
 import ChatWindow from '../../components/ChatWindow/ChatWindow';
+import WindowPortal from '../../components/WindowPortal/WindowPortal';
 import UserMenu from '../../components/UserMenu/UserMenu';
 import { useAuth } from '../../hooks/useAuth';
 import { socketEvents } from '../../backend/socket_server/events';
@@ -58,15 +59,20 @@ const Home = () => {
         }}
       />
       {activeChats.map((friendId: number) => (
-        <ChatWindow
+        <WindowPortal
           key={friendId}
-          friend={friends.find((friend) => friend.id === friendId)}
-          onClose={(friendId: number) =>
+          friendId={friendId}
+          mainWindow={window}
+          onClose={(friendId: number) => {
             setActiveChats(
               activeChats.filter((activeChat) => activeChat !== friendId)
-            )
-          }
-        />
+            );
+          }}
+        >
+          <ChatWindow
+            friend={friends.find((friend) => friend.id === friendId)}
+          />
+        </WindowPortal>
       ))}
     </div>
   );
