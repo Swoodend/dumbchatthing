@@ -16,6 +16,7 @@ const ChatWindow = ({ friend }: Props) => {
 
   React.useEffect(() => {
     socket.on(socketEvents.CLIENT_MESSAGE, (message) => {
+      console.log('SOCKET HEARD MESSAGE', 'SETTING MESSAGES TO', messages);
       setMessages([...messages, message]);
     });
   }, []);
@@ -23,6 +24,7 @@ const ChatWindow = ({ friend }: Props) => {
   const onSendMessage = (message: string) => {
     // when YOU send a message, we want to add the message you send to the chat readout
     // we don't ONLY want to add recieved messages from the socket to the readout
+    console.log('LOCAL', 'SETTING MESSAGES TO', messages);
     setMessages([...messages, message]);
   };
 
