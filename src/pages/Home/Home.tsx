@@ -4,7 +4,7 @@ import ChatWindow from '../../components/ChatWindow/ChatWindow';
 import WindowPortal from '../../components/WindowPortal/WindowPortal';
 import UserMenu from '../../components/UserMenu/UserMenu';
 import { useAuth } from '../../hooks/useAuth';
-import { socketEvents } from '../../backend/socket_server/events';
+import { socketEvents } from '../../backend/socket/events';
 import { socket } from '../../socket';
 
 import './styles';

@@ -6,7 +6,7 @@
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
-    "start:server": "ts-node ./src/backend/socket_server/server.ts",
+    "start:server": "ts-node ./src/backend/socket/server.ts",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",

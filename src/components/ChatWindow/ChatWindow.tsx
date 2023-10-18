@@ -1,6 +1,6 @@
 import React from 'react';
 import { socket } from '../../socket';
-import { socketEvents } from '../../backend/socket_server/events';
+import { socketEvents } from '../../backend/socket/events';
 
 import './styles.css';
 import ChatActionBar from '../ChatActionBar/ChatActionBar';
@@ -24,7 +24,6 @@ const ChatWindow = ({ friend }: Props) => {
       setMessages([...messagesRef.current, message]);
     };
 
-    // TODO - make sure you call socket.off on all instances of socket.on when a component unmounts
     socket.on(socketEvents.CLIENT_MESSAGE, updateMessages);
 
     return () => {

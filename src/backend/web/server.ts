@@ -1,22 +1,18 @@
 import express from 'express';
 import https from 'https';
-import fs from 'fs';
 import path from 'path';
-import { Server } from 'socket.io';
-import { socketEvents } from './events';
+import fs from 'fs';
+import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import jwt from 'jsonwebtoken';
 import { db } from '../db/db';
 import { RunResult } from 'sqlite3';
-import jwt from 'jsonwebtoken';
-import cookieParser from 'cookie-parser';
+import { socketEvents } from '../socket/events';
 import { Friend } from '../../components/FriendList/FriendList';
-import { Socket } from 'socket.io-client';
-import dotenv from 'dotenv';
+import { userIdToSocketMap } from '../socket/server';
 
 dotenv.config();
-
-// TODO - move to env var
-const JWT_SECRET = process.env.JWT_SECRET;
 
 type jwtToken = {
   username: string;
@@ -24,13 +20,8 @@ type jwtToken = {
   id: number;
 };
 
-export type ServerMessagePayload = {
-  message: string;
-  destinationClientId: number;
-};
-
 const app = express();
-const server = https.createServer(
+export const server = https.createServer(
   {
     key: fs.readFileSync(
       path.resolve(__dirname, '../../../localhost+2-key.pem')
@@ -39,54 +30,6 @@ const server = https.createServer(
   },
   app
 );
-const io = new Server(server);
-
-const userIdToSocketMap = new Map<number, Socket>();
-const socketIdToUserIdMap = new Map<string, number>();
-
-// TODO - pull socket logic out to it's own module
-// when the app opens, a user should connect to the socket server
-io.on(socketEvents.CONNECTION, (socket) => {
-  // TODO - after login, lets add the client to our map
-  socket.on(socketEvents.CHAT_INIT, (userId: number) => {
-    userIdToSocketMap.set(userId, socket);
-    socketIdToUserIdMap.set(socket.id, userId);
-  });
-
-  // when a client sends a message to the server
-  socket.on(socketEvents.SERVER_MESSAGE, (payload: ServerMessagePayload) => {
-    const destinationSocket = userIdToSocketMap.get(
-      payload.destinationClientId
-    );
-
-    if (!destinationSocket) {
-      console.log('you fucked up');
-      return;
-    }
-
-    console.log(
-      `SERVER_MESSAGE heard on the server. Sending CLIENT_MESSAGE event to userid: ${payload.destinationClientId}`
-    );
-
-    try {
-      socket
-        .to(destinationSocket.id)
-        .emit(socketEvents.CLIENT_MESSAGE, payload.message);
-    } catch (err) {
-      console.error('ERRROR WHEN SENDING SOCKET.CLIENT_MESSAGE', err);
-    }
-  });
-
-  // when a user closes a chat, or closes the electron app entirely
-  socket.on(socketEvents.DISCONNECT, () => {
-    const userId = socketIdToUserIdMap.get(socket.id);
-    if (userId) {
-      userIdToSocketMap.delete(userId);
-    }
-    socketIdToUserIdMap.delete(socket.id);
-    console.log('a user disconnected');
-  });
-});
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -121,7 +64,7 @@ app.post('/login', (req, res) => {
           username: user.username,
         };
 
-        const token = jwt.sign(responsePayload, JWT_SECRET);
+        const token = jwt.sign(responsePayload, process.env.JWT_SECRET);
         res.cookie('jwt', token, {
           httpOnly: true,
           sameSite: 'none',
@@ -161,7 +104,7 @@ app.post('/register', (req, res) => {
         username,
       };
 
-      const token = jwt.sign(responsePayload, JWT_SECRET);
+      const token = jwt.sign(responsePayload, process.env.JWT_SECRET);
       res.cookie('jwt', token, {
         httpOnly: true,
         sameSite: 'none',
@@ -181,7 +124,7 @@ app.get('/friends/:userId', (req, res) => {
   }
 
   try {
-    const userData = jwt.verify(token, JWT_SECRET) as jwtToken;
+    const userData = jwt.verify(token, process.env.JWT_SECRET) as jwtToken;
     const friendsQuery = `SELECT id, username, email FROM users INNER JOIN friends on users.id = friends.user_id WHERE friends.friend_id = ?`;
 
     db.all(friendsQuery, [userData.id], (err, friends: Friend[]) => {
@@ -212,7 +155,7 @@ app.post('/add-friend', (req, res) => {
 
   try {
     // server will validate JWT
-    const userData = jwt.verify(token, JWT_SECRET) as jwtToken;
+    const userData = jwt.verify(token, process.env.JWT_SECRET) as jwtToken;
     const userQuery = `SELECT id, username, email FROM users WHERE email=?`;
 
     db.get(userQuery, [friendEmail], (err: Error, friend: Friend) => {

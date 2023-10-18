@@ -1,6 +1,6 @@
 import './styles.css';
 import { socket } from '../../socket';
-import { socketEvents } from '../../backend/socket_server/events';
+import { socketEvents } from '../../backend/socket/events';
 
 export type Friend = {
   id: number;
