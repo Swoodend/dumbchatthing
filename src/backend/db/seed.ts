@@ -1,4 +1,5 @@
 import { Database } from 'sqlite3';
+import bcrypt from 'bcrypt';
 
 // TODO - probably want to only expose alice/bob in a dev specific instance of the app
 
@@ -19,8 +20,18 @@ export const createUsers = (db: Database): Promise<void | Error> => {
         }
 
         Promise.all([
-          createUser(db, 'Alice', 'alice', 'alice@aol.com'),
-          createUser(db, 'BIG BOB', 'bob', 'bob@bobbysworld.com'),
+          createUser(
+            db,
+            'Alice',
+            bcrypt.hashSync('alice', 10),
+            'alice@aol.com'
+          ),
+          createUser(
+            db,
+            'BIG BOB',
+            bcrypt.hashSync('bob', 10),
+            'bob@bobbysworld.com'
+          ),
         ])
           .then(() => resolve())
           .catch((err) => reject(err));
