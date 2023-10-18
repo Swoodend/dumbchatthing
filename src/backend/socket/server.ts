@@ -16,7 +16,6 @@ const io = new Server(server);
 export const userIdToSocketMap = new Map<number, Socket>();
 export const socketIdToUserIdMap = new Map<string, number>();
 
-// TODO - pull socket logic out to it's own module
 // when the app opens, a user should connect to the socket server
 io.on(socketEvents.CONNECTION, (socket) => {
   // after login, lets add the client to our map

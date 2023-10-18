@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { db } from '../db/db';
 import { RunResult } from 'sqlite3';
 import { socketEvents } from '../socket/events';
@@ -41,23 +42,19 @@ app.use((_req, res, next) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  // TODO -  salt/hash the password
 
   // find user
   const userQuery = 'SELECT * FROM users WHERE email=?';
   db.get(
     userQuery,
     [email],
-    // TODO - where to type these responses?
     (error, user: { id: number; password: string; username: string }) => {
       if (error) {
         console.error('something went wrong in /login', email);
         res.sendStatus(500);
         return;
       }
-
-      //TODO - salt/hash this shit
-      if (user && user?.password === password) {
+      if (user && bcrypt.compareSync(user.password, password)) {
         const responsePayload = {
           id: user.id,
           email,
@@ -79,17 +76,17 @@ app.post('/login', (req, res) => {
   );
 });
 
-// TODO - pull REST stuff out to it's own module
 app.post('/register', (req, res) => {
   const { email, password, username } = req.body;
-  // TODO -  salt/hash the password
+
+  const hashedPass = bcrypt.hashSync(password, 10);
   // create user and save to db
   // TODO - all these queries can get pulled out somewhere so they aren't  redefined over and over for each request
   const user = 'INSERT INTO users (username, email, password) VALUES (?,?,?)';
 
   db.run(
     user,
-    [username, email, password],
+    [username, email, hashedPass],
     function (_result: RunResult, error: Error) {
       if (error) {
         console.error('REGISTRATION ERROR', error);

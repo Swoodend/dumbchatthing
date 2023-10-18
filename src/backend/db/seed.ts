@@ -1,5 +1,8 @@
 import { Database } from 'sqlite3';
 
+// TODO - probably want to only expose alice/bob in a dev specific instance of the app
+
+// TODO - pull this work out to db migrations
 export const createUsers = (db: Database): Promise<void | Error> => {
   return new Promise((resolve, reject) => {
     db.run(
