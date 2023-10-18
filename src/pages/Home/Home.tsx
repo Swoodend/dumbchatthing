@@ -34,15 +34,20 @@ const Home = () => {
   }, []);
 
   React.useEffect(() => {
-    socket.on(socketEvents.FRIEND_REQUEST, (friendRequest: FriendRequest) => {
+    const updateFriends = (friendRequest: FriendRequest) => {
       setFriendRequests([friendRequest, ...friendRequests]);
+    };
 
-      // friends UI will be present them with a "new friend request" badge on emit
-      // they can click the badge, open the "accept friend modal thing" and click "accept friend"
-      // if they click "accept friend" we fire off a REST call to establish the friendship in the DB
-      // emit a "FRIEND ACCEPTED" event, the UI can then add that friend to your list so no page refresh necessary
-      // once the page is reloaded, the friend(s) will be loaded from the DB
-    });
+    // friends UI will be present them with a "new friend request" badge on emit
+    // they can click the badge, open the "accept friend modal thing" and click "accept friend"
+    // if they click "accept friend" we fire off a REST call to establish the friendship in the DB
+    // emit a "FRIEND ACCEPTED" event, the UI can then add that friend to your list so no page refresh necessary
+    // once the page is reloaded, the friend(s) will be loaded from the DB
+    socket.on(socketEvents.FRIEND_REQUEST, updateFriends);
+
+    return () => {
+      socket.off(socketEvents.FRIEND_REQUEST, updateFriends);
+    };
   }, []);
 
   return (

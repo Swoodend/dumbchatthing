@@ -20,9 +20,16 @@ const ChatWindow = ({ friend }: Props) => {
   }, [messages]);
 
   React.useEffect(() => {
-    socket.on(socketEvents.CLIENT_MESSAGE, (message) => {
+    const updateMessages = (message: string) => {
       setMessages([...messagesRef.current, message]);
-    });
+    };
+
+    // TODO - make sure you call socket.off on all instances of socket.on when a component unmounts
+    socket.on(socketEvents.CLIENT_MESSAGE, updateMessages);
+
+    return () => {
+      socket.off(socketEvents.CLIENT_MESSAGE, updateMessages);
+    };
   }, []);
 
   const onSendMessage = (message: string) => {
