@@ -54,7 +54,7 @@ app.post('/login', (req, res) => {
         res.sendStatus(500);
         return;
       }
-      if (user && bcrypt.compareSync(user.password, password)) {
+      if (user && bcrypt.compareSync(password, user.password)) {
         const responsePayload = {
           id: user.id,
           email,
